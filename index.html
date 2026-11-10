@@ -2815,6 +2815,8 @@ var T_INST = paulEx('Tangents_Rates', 'Tangent Lines and Rates of Change', 'Exam
 var T_LIMIT = paulEx('TheLimit', 'The Limit', 'Examples 1 and 2');
 var T_ONE = paulEx('OneSidedLimits', 'One-Sided Limits', 'Example 4');
 var T_ONET = paulEx('OneSidedLimits', 'One-Sided Limits', 'Examples 1 to 3');
+var T_TAN1 = paulEx('Tangents_Rates', 'Tangent Lines and Rates of Change', 'Example 1');   /* More Practice: the tangent line */
+var DESMOS = 'https://www.desmos.com/scientific';
 var DNE = ['does not exist', 'dne', 'doesn’t exist', "doesn't exist", 'no limit'];
 
 /* ---------------- form guards (see the problem object above) ---------------- */
@@ -2832,6 +2834,13 @@ var FORM = {
       }
       return count > n ? msg : null;
     };
+  },
+  /* y = mx + b: no parentheses, y alone on the left (or no left side), at most two terms on the right (More Practice;
+     copied from practice-unit-04) */
+  slopeIntercept: function (raw) {
+    var s = String(raw).replace(/\s+/g, '').replace(/[−–]/g, '-'), i = s.lastIndexOf('='), lhs = i >= 0 ? s.slice(0, i) : 'y';
+    var msg = 'That is the right line. Multiply out and combine the constants so that it reads `y = mx + b`.';
+    return /[()]/.test(s) || lhs.toLowerCase() !== 'y' || FORM.terms(2, msg)(s.slice(i + 1)) ? msg : null;
   }
 };
 
@@ -2839,7 +2848,8 @@ var FORM = {
 var SECTIONS_P = [
   { id: 'sec-avg', title: 'Average Rate of Change', nav: 'Average Rate', lede: 'These go with Paul’s [Tangent Lines and Rates of Change](' + T_ARC[0] + '), Example 2, where A.R.C. is the average rate of change. It is also the slope of the secant line.' },
   { id: 'sec-inst', title: 'Instantaneous Rate of Change', nav: 'Instantaneous Rate', lede: 'These go with Paul’s [Tangent Lines and Rates of Change](' + T_INST[0] + '), Examples 1 and 2.' },
-  { id: 'sec-limit', title: 'Estimating a Limit', nav: 'Limits', lede: 'These go with Paul’s [The Limit](' + T_LIMIT[0] + '), Examples 1 and 2, and [One-Sided Limits](' + T_ONE[0] + '), Example 4.' }
+  { id: 'sec-limit', title: 'Estimating a Limit', nav: 'Limits', lede: 'These go with Paul’s [The Limit](' + T_LIMIT[0] + '), Examples 1 and 2, and [One-Sided Limits](' + T_ONE[0] + '), Example 4.' },
+  { id: 'sec-more', title: 'More Practice (Only If You Want It)', nav: 'More Practice', lede: 'Nothing in this section is required. If a kind of problem above took you more than one try, the problem of the same kind here gives you another go: Problems 9 and 10 for an average rate of change, Problems 11 and 12 for an instantaneous rate, and Problems 13 to 17 for estimating a limit. The Unit 2 Problem Set comes next either way.' }
 ];
 
 /* ---------------- the problems ---------------- */
@@ -3051,7 +3061,271 @@ var PROBLEMS = [
     graph: { x: [-4, 0], y: [-6, 6], ticks: { x: 1, y: 2 }, fns: [{ f: function (x) { return 2 - x; }, domain: [-4, -2] }, { f: function (x) { return x - 2; }, domain: [-2, 0] }],
       dots: [{ x: -2, y: 4, open: true, label: '(−2, 4)', at: 'ne' }, { x: -2, y: -4, open: true, label: '(−2, −4)', at: 'sw' }],
       aria: 'The graph of q: a line falling to an open circle at (−2, 4) from the left, and a line rising from an open circle at (−2, −4) to the right.' },
-    after: 'The graph jumps at `x = −2`: it heads to 4 from the left and to `−4` from the right.' }
+    after: 'The graph jumps at `x = −2`: it heads to 4 from the left and to `−4` from the right.' },
+
+  /* ================= More Practice (optional), added 2026-11-10 by the clarity rebuild =================
+     From the practice twins removed from Unit 2 Worked Examples (plan/clarity-rebuild/twins/unit-02.md: 2.1 to 2.7)
+     and the value-add Paul problems (plan/clarity-rebuild/units/unit-02/value-add.md: Tangent Lines and Rates of
+     Change 1; One-Sided Limits 3 and 4). Every key and wrong answer: SPEC.md, "More Practice". */
+
+  /* 9. (twin 2.1) average rate from a table, then a rate at one instant from the rates on either side */
+  { id: 'm1', sec: 'sec-more', task: 'A hiker’s elevation `E(t)`, in meters, is recorded `t` hours after midnight, so 9 a.m. is `t = 9` and 1 p.m. is `t = 13`. Find the average rate of change of her elevation from `t = 9` to `t = 11`, then estimate her rate of climb at `t = 11`.', v: 't', teach: T_ARC,
+    tbl: { dir: 'across', cols: ['`t`', '`E(t)`'], rows: [['9', '1250'], ['11', '1450'], ['13', '1610']] },
+    steps: [
+      { lead: 'Find the change in elevation from `t = 9` to `t = 11`.', ask: 'E(11) − E(9) =', num: true, ans: '200', units: 'meters',
+        wrongs: [['-200', 'Subtract in the order of the times: the later value minus the earlier one, `E(11) − E(9) = 1450 − 1250`.'],
+          ['360', '`1610 − 1250` runs to `t = 13`. The interval ends at `t = 11`, where `E(11) = 1450`.'],
+          ['160', '`1610 − 1450` is the change from `t = 11` to `t = 13`. Start at `t = 9`.']],
+        hints: ['Read `E(11)` and `E(9)` from the table, then subtract.'] },
+      { lead: 'Divide by the change in time.', ask: 'F{E(11) − E(9)}{11 − 9} =', num: true, ans: '100', units: 'm/h', unitAlts: ['meters per hour', 'meters/hour'],
+        wrongs: [['200', 'That is the change in elevation. Divide it by the change in time, `11 − 9 = 2` hours.', ['#ex-p1', 'See Problem 1, the same step']],
+          ['0.01', 'That is upside down. Put the change in elevation on top and the change in time on the bottom.'],
+          ['-100', 'Her elevation went up, from 1250 to 1450 meters, so the rate is positive.']],
+        hints: ['The change in time is `11 − 9 = 2` hours. Divide 200 by it.'] },
+      { lead: 'Which sentence states what 100 means?', ok: 0, pick: [
+        ['From 9 a.m. to 11 a.m., her elevation rose by an average of 100 meters per hour.', 'An average rate describes the whole interval, with units of output per unit of input.'],
+        ['At 10 a.m., she is climbing at exactly 100 meters per hour.', 'An average rate describes the whole interval. Her rate at one instant can differ from it.'],
+        ['She climbed 100 meters from 9 a.m. to 11 a.m.', 'She climbed 200 meters in those 2 hours. 100 is meters per hour.']] },
+      { lead: 'How do you estimate her rate at `t = 11` from the table?', ok: 0, pick: [
+        ['Find the average rates on the intervals just before and just after `t = 11`, then average them', 'Those two intervals are the shortest ones the table gives around `t = 11`, one on each side.'],
+        ['Divide `E(11)` by 11', '`F{E(11)}{11}` treats her as starting from elevation 0 at midnight. Use the intervals right next to `t = 11`.', ['#ex-p4', 'See Problem 4, the same choice']],
+        ['Use the rate from `t = 9` to `t = 11` alone', 'That interval ends at `t = 11`, so it sees only the time before it. Average it with the rate just after `t = 11`.']] },
+      { lead: 'The average rate from `t = 11` to `t = 13`:', ask: 'F{E(13) − E(11)}{13 − 11} =', num: true, ans: '80', units: 'm/h', unitAlts: ['meters per hour', 'meters/hour'],
+        wrongs: [['160', 'That is the change in elevation. Divide it by the change in time, 2 hours.'],
+          ['-80', 'Subtract in the order of the times: `E(13) − E(11) = 1610 − 1450`, which is positive.'],
+          ['123.85', '`F{1610}{13}` uses `E(13)` alone. Subtract `E(11)` first.']],
+        hints: ['`1610 − 1450`, divided by 2.'] },
+      { lead: 'Average the two rates.', ask: '"rate at" t = 11 ≈', num: true, ans: '90', units: 'm/h', unitAlts: ['meters per hour', 'meters/hour'],
+        wrongs: [['180', 'That is the sum. Divide it by 2 to average the two rates.'],
+          ['20', 'That is the difference between the rates. Add them and divide by 2.'],
+          ['100', 'That is the rate before `t = 11` only. Average it with the rate after, 80.'],
+          ['80', 'That is the rate after `t = 11` only. Average it with the rate before, 100.']],
+        hints: ['Add 100 and 80, then divide by 2.'] }],
+    graph: { x: [8.5, 14], y: [1100, 1700], ticks: { x: 1, y: 100 }, labels: { x: 't' }, fns: [],
+      segs: [{ from: [9, 1250], to: [11, 1450], role: 'rate', width: 2.5 }, { from: [11, 1450], to: [13, 1610], role: 'rate', width: 2.5 }],
+      dots: [{ x: 9, y: 1250, label: '(9, 1250)', at: 'se' }, { x: 11, y: 1450, label: '(11, 1450)', at: 'nw' }, { x: 13, y: 1610, label: '(13, 1610)', at: 'n' }],
+      aria: 'The table plotted as three points, (9, 1250), (11, 1450) and (13, 1610), joined by two secant segments: the first steeper, with slope 100, the second with slope 80.' },
+    after: 'The secant segment before `t = 11` has slope 100 meters per hour, and the one after has slope 80. The estimate at `t = 11` is their average, 90 meters per hour.' },
+
+  /* 10. (twin 2.2) average rate from a formula with a fraction */
+  { id: 'm2', sec: 'sec-more', task: 'Find the average rate of change of `q` on the interval `[1, 4]`.', board: 'q(x) = F{x + 1}{x}', teach: T_ARC,
+    steps: [
+      { lead: 'Find `q(4)`.', ask: 'q(4) =', num: true, ans: '5/4', also: ['1.25'],
+        wrongs: [['5', 'That is the top, `4 + 1`. Divide it by the bottom, 4.'],
+          ['2', 'That is `q(1)`. Put 4 in for every `x`: `F{4 + 1}{4}`.'],
+          ['0.8', 'That is upside down. The top is `x + 1 = 5` and the bottom is `x = 4`.']],
+        hints: ['`q(4) = F{4 + 1}{4}`.'] },
+      { lead: 'Find `q(1)`.', ask: 'q(1) =', num: true, ans: '2',
+        wrongs: [['1', 'The top is `x + 1`, so at `x = 1` it is `1 + 1 = 2`. Then divide by 1.'],
+          ['1.25', 'That is `q(4)`. Put 1 in for every `x`: `F{1 + 1}{1}`.']],
+        hints: ['`q(1) = F{1 + 1}{1}`.'] },
+      { lead: 'Find the change in `q`.', ask: 'q(4) − q(1) =', num: true, ans: '-3/4', also: ['-0.75'],
+        wrongs: [['0.75', 'Subtract in the order of the interval: `q(4) − q(1) = F{5}{4} − 2`, which is negative.'],
+          ['3.25', 'That adds the two values. Subtract: `F{5}{4} − 2 = F{5}{4} − F{8}{4}`.']],
+        hints: ['Write 2 as `F{8}{4}`, then subtract: `F{5}{4} − F{8}{4}`.'] },
+      { lead: 'Divide by the change in `x`.', ask: 'F{q(4) − q(1)}{4 − 1} =', num: true, ans: '-1/4', also: ['-0.25'],
+        wrongs: [['-0.75', 'That is the change in `q`. A rate divides it by the change in `x`, `4 − 1 = 3`.', ['#ex-p3', 'See Problem 3, the same step']],
+          ['-2.25', 'Dividing by 3 is multiplying by `F{1}{3}`: `F{−3/4}{3} = −F{3}{4} · F{1}{3}`.'],
+          ['0.25', 'The change in `q` is negative, so the rate is negative too.'],
+          ['-4', 'That is upside down. Put the change in `q` on top and the change in `x` on the bottom.']],
+        hints: ['`F{−3/4}{3} = −F{3}{4} · F{1}{3}`.'] },
+      { lead: 'On a graph of `q`, what is `−F{1}{4}`?', ok: 0, pick: [
+        ['The slope of the secant line through `(1, 2)` and `(4, 1.25)`', 'The average rate of change on `[1, 4]` is the slope of the secant line between the two endpoints.'],
+        ['The height of the graph halfway between 1 and 4', 'An average rate of change is a slope, the rise over the run. The heights at the ends are 2 and 1.25.'],
+        ['The change in height from `x = 1` to `x = 4`', 'The change in height is `−F{3}{4}`. The rate divides it by the run, 3.']] }],
+    graph: { x: [0, 5], y: [0, 3.5], ticks: { x: 1, y: 1 }, fns: [{ f: function (x) { return (x + 1) / x; }, domain: [0.5, 5] }], secant: { f: 0, a: 1, b: 4, role: 'rate', extend: false },
+      dots: [{ x: 1, y: 2, label: '(1, 2)', at: 'ne' }, { x: 4, y: 1.25, label: '(4, 1.25)', at: 'n' }],
+      aria: 'The graph of q, a curve falling from (0.5, 3) and leveling off toward height 1, with the secant segment from (1, 2) to (4, 1.25).' },
+    after: 'The secant segment falls `F{3}{4}` over a run of 3, so its slope is `−F{1}{4}`.' },
+
+  /* 11. (twin 2.3) a rate at one instant from a table of average rates */
+  { id: 'm3', sec: 'sec-more', task: 'The volume `V(t)` of a balloon, in liters, is measured `t` seconds after it starts to inflate. The table gives the average rate of change of `V` over the interval between 1 and `t`, in liters per second, for `t` near 1. Estimate the rate at which the volume changes at `t = 1`.', teach: T_INST,
+    tbl: { cols: ['`t`', 'Rate', '`t`', 'Rate'], rows: [['0.9', '10.2633', '1.1', '9.7618'], ['0.99', '10.0251', '1.01', '9.9751'], ['0.999', '10.0025', '1.001', '9.9975']] },
+    steps: [
+      { lead: 'What does the entry 10.0251, beside `t = 0.99`, measure?', ok: 0, pick: [
+        ['The average rate of change of `V` from `t = 0.99` to `t = 1`', 'Each entry is an average over the interval between 1 and that value of `t`.'],
+        ['The volume at `t = 0.99`', 'The entries are rates, in liters per second. A volume would be in liters.'],
+        ['The rate at the instant `t = 0.99`', 'Each entry is an average over an interval. Here the interval runs from 0.99 to 1.']] },
+      { lead: 'As `t` closes in on 1 from both sides, what number do the average rates approach?', ask: '"rate at" t = 1 ≈', num: true, ans: '10', tol: 0.0011, units: 'L/s', unitAlts: ['liters per second', 'liters/second'],
+        wrongs: [[['10.0025', '9.9975', '10.0251', '9.9751', '10.2633', '9.7618'], 'That is one of the average rates. The values from both sides close in on a single whole number.'],
+          ['1', '1 is where `t` is heading. The question asks what the rates approach: read the Rate columns.']],
+        hints: ['Read down each Rate column, toward `t = 1`. The left values fall toward a number and the right values rise toward the same number.'] },
+      { lead: 'Which sentence states what 10 means?', ok: 0, pick: [
+        ['At `t = 1`, the volume is growing at about 10 liters per second.', 'The number the average rates approach is the rate at that instant, in liters per second.'],
+        ['At `t = 1`, the balloon holds about 10 liters.', '10 is in liters per second, so it is a rate. The table says nothing about how much air is inside.'],
+        ['In its first second, the balloon took in 10 liters.', 'That would be an average over the whole first second. 10 is the rate at the instant `t = 1`.']] },
+      { lead: 'At `t = 1`, is the volume increasing or decreasing?', ok: 0, pick: [
+        ['Increasing, because the rate is positive', 'The sign of the rate gives the direction: a positive rate means the output is going up.'],
+        ['Decreasing, because the average rates get smaller as `t` grows', 'The rates shrink toward 10, but every one of them is positive, and a positive rate means the volume is going up.'],
+        ['You cannot tell from rates alone', 'You can: the sign of the rate gives the direction, and here it is positive.']] }] },
+
+  /* 12. (Paul, Tangent Lines and Rates of Change, Problem 1) secant slopes from a formula, then the tangent line */
+  { id: 'm4', sec: 'sec-more', task: 'The point `P` on the graph of `f` has `x = −3`. Estimate the slope of the tangent line at `P` from slopes of secant lines, then write the tangent line.', board: 'f(x) = 3(x + 2)^2', teach: T_TAN1,
+    steps: [
+      { lead: 'Find `f(−3)`, the height of `P`.', ask: 'f(−3) =', num: true, ans: '3',
+        wrongs: [['9', 'Only `x + 2` is squared: `3(−3 + 2)^2 = 3(−1)^2 = 3 · 1`.'],
+          ['-3', '`(−1)^2 = (−1)(−1) = 1`, not `−1`.']],
+        hints: ['`−3 + 2 = −1`. Square it, then multiply by 3.'] },
+      { lead: 'Find `f(−2.9)`.', ask: 'f(−2.9) =', num: true, ans: '2.43', tol: 0.0051,
+        wrongs: [['7.29', 'Only `x + 2` is squared: `3(−0.9)^2 = 3 · 0.81`, not `(3 · (−0.9))^2`.'],
+          ['-2.43', '`(−0.9)^2 = 0.81` is positive, so `f(−2.9)` is positive.'],
+          ['2.7', 'Square `−0.9` first: `(−0.9)^2 = 0.81`. Then multiply by 3.']],
+        hints: ['`−2.9 + 2 = −0.9` and `(−0.9)^2 = 0.81`.'] },
+      { lead: 'Find the slope of the secant line from `x = −3` to `x = −2.9`.', ask: 'F{f(−2.9) − f(−3)}{−2.9 − (−3)} =', num: true, ans: '-5.7', tol: 0.0051,
+        wrongs: [['-0.57', 'That is the change in height. Divide it by the change in `x`, `−2.9 − (−3) = 0.1`, which multiplies it by 10.'],
+          ['5.7', 'The top, `2.43 − 3`, is negative and the bottom, 0.1, is positive, so the slope is negative.'],
+          ['-0.175', 'That is upside down. Put the change in height on top and the change in `x` on the bottom.']],
+        hints: ['`2.43 − 3 = −0.57`, and `−2.9 − (−3) = 0.1`.'] },
+      { lead: 'Now from the left. With `f(−3.1) = 3.63`, find the slope of the secant line from `x = −3.1` to `x = −3`.', ask: 'F{f(−3) − f(−3.1)}{−3 − (−3.1)} =', num: true, ans: '-6.3', tol: 0.0051,
+        wrongs: [['6.3', 'Keep the later `x` first on top and on the bottom: `F{3 − 3.63}{0.1}`, a negative top over a positive bottom.', ['#ex-p5', 'See Problem 5, the same step']],
+          ['-0.63', 'That is the change in height. Divide it by the change in `x`, 0.1.']],
+        hints: ['`3 − 3.63 = −0.63`, and `−3 − (−3.1) = 0.1`.'] },
+      { show: ['F{f(−2.99) − f(−3)}{0.01} = −5.97', 'F{f(−3) − f(−3.01)}{0.01} = −6.03', 'F{f(−2.999) − f(−3)}{0.001} = −5.997', 'F{f(−3) − f(−3.001)}{0.001} = −6.003'] },
+      { lead: 'The board shows the slopes over shorter intervals. What number do they approach from both sides? That is the slope of the tangent line at `P`.', ask: '"slope at" x = −3 ≈', num: true, ans: '-6', tol: 0.0011,
+        wrongs: [[['-5.97', '-6.03', '-5.997', '-6.003', '-5.7', '-6.3'], 'That is one of the secant slopes. The slopes from both sides close in on a single whole number.'],
+          ['3', '`f(−3) = 3` is the height of `P`, not a slope.'],
+          ['6', 'Every secant slope is negative, so the number they approach is negative too.']],
+        hints: ['The right-side slopes rise toward a number and the left-side slopes fall toward the same number.'] },
+      { lead: 'Write the tangent line, the line through `(−3, 3)` with slope `−6`, in the form `y = mx + b`.', ask: 'y =', eq: 'y', ans: '-6x - 15', form: FORM.slopeIntercept,
+        wrongs: [['-6x + 21', 'The point has `x = −3`, so the factor is `x − (−3) = x + 3`, not `x − 3`.', T_TAN1],
+          ['-6x + 6', 'The `−6` multiplies both terms of `x + 3`: `−6(x + 3) = −6x − 18`.'],
+          ['-6x - 21', 'From `y − 3 = −6x − 18`, add 3 to both sides: `y = −6x − 15`.'],
+          ['3x + 3', 'The slope, `−6`, multiplies `x + 3`, and the height, 3, is added: `y = 3 − 6(x + 3)`.']],
+        hints: ['Start from `y − 3 = −6(x − (−3)) = −6(x + 3)`. Multiply out, then add 3 to both sides.'] }],
+    graph: { x: [-5, 1], y: [-6, 15], ticks: { x: 1, y: 3 }, fns: [{ f: function (x) { return 3 * (x + 2) * (x + 2); } }], tangent: { f: 0, at: -3, slope: -6, half: 1.3 },
+      dots: [{ x: -3, y: 3, label: '(−3, 3)', at: 'e' }],
+      aria: 'The graph of f(x) = 3(x + 2) squared, a parabola opening up with its lowest point at (−2, 0), and its tangent line of slope −6 touching it at (−3, 3).' },
+    after: 'The tangent line at `(−3, 3)` is `y = −6x − 15`. The secant slopes closed in on its slope, `−6`.' },
+
+  /* 13. (twin 2.4) a limit from a table, where the function has no value */
+  { id: 'm5', sec: 'sec-more', task: 'The table gives values of `g(x) = F{x^3 − 1}{x − 1}` near `x = 1`.', teach: T_LIMIT,
+    tbl: { cols: ['`x`', '`g(x)`', '`x`', '`g(x)`'], rows: [['0.9', '2.71', '1.1', '3.31'], ['0.99', '2.9701', '1.01', '3.0301'], ['0.999', '2.9970', '1.001', '3.0030']] },
+    steps: [
+      { lead: 'What is `g(1)`?', ok: 0, pick: [
+        ['`g(1)` has no value, because plugging in gives `F{0}{0}`', 'That is why the table uses values near 1, never 1 itself.'],
+        ['`g(1) = 0`', 'Plugging in gives `F{1 − 1}{1 − 1} = F{0}{0}`, which has no value. A fraction with 0 on the bottom has no value.'],
+        ['`g(1) = 3`', 'The table suggests the limit is about 3, but plugging in 1 gives `F{0}{0}`, which has no value.']] },
+      { lead: 'As `x` approaches 1 from the left, what number do the values of `g(x)` approach?', ask: 'lim{x→1^-} g(x) ≈', num: true, ans: '3', tol: 0.0011,
+        wrongs: [['1', '`x` approaches 1. The question asks what `g(x)` approaches: read the `g(x)` values.', ['#ex-p6', 'See Problem 6, the same step']],
+          [['2.71', '2.9701'], 'That value is far from `x = 1`. Read down the left-hand pair, where `x < 1`, as `x` gets closer to 1.'],
+          ['2.997', 'That is the last value in the table. What number are the values closing in on?']],
+        hints: ['Read the `g(x)` values for 0.9, 0.99 and 0.999. Which number are they closing in on?'] },
+      { lead: 'Now read the right-hand pair, where `x > 1`.', ask: 'lim{x→1^+} g(x) ≈', num: true, ans: '3', tol: 0.0011,
+        wrongs: [[['3.31', '3.0301'], 'That value is far from `x = 1`. Read down from 1.1 to 1.001, as `x` gets closer to 1.'],
+          ['3.003', 'That is the last value in the table. What number are the values closing in on?']],
+        hints: ['Read the `g(x)` values for 1.1, 1.01 and 1.001.'] },
+      { lead: 'Estimate the limit.', ask: 'lim{x→1} g(x) ≈', num: true, ans: '3', tol: 0.0011,
+        wrongs: [[DNE.concat(['undefined', 'none', '0/0']), 'Both sides approach 3, so the limit exists even though `g(1)` has no value. A limit never uses the value at 1.']],
+        hints: ['When both one-sided limits are the same number, the limit is that number.'] }],
+    graph: { x: [-1, 2], y: [0, 8], ticks: { x: 1, y: 1 }, fns: [{ f: function (x) { return x * x + x + 1; }, domain: [-1, 2] }], dots: [{ x: 1, y: 3, open: true, label: '(1, 3)', at: 'nw' }],
+      aria: 'The graph of g, a curve rising to the right, with an open circle, a hole, at (1, 3).' },
+    after: 'The graph of `g` has a hole at `(1, 3)`: the curve heads to height 3 from both sides.' },
+
+  /* 14. (twin 2.5) build the table yourself, in radian mode */
+  { id: 'm6', sec: 'sec-more', task: 'Estimate `lim{x→0} h(x)` by computing values of `h` near 0 with a calculator in radian mode. Round each value to four decimal places.', board: 'h(x) = F{sin(3x)}{x}', teach: T_LIMIT,
+    steps: [
+      { lead: 'Find `h(0.1)`. Use the [Desmos scientific calculator](' + DESMOS + ') in radian mode.', ask: 'h(0.1) ≈', num: true, ans: '2.9552', tol: 0.00011,
+        wrongs: [['0.0524', 'Your calculator is in degree mode. Switch it to radians and compute again.'],
+          ['0.2955', 'That is `sin(0.3)`, the top. Divide it by the bottom, 0.1.'],
+          ['2.995', 'That is `F{3sin(0.1)}{0.1}`. Here the 3 is inside the sine: compute `sin(3 · 0.1) = sin(0.3)` first.'],
+          ['3', '3 is where the values seem to head, but this row asks for `h(0.1)` itself, to four decimal places.']],
+        hints: ['Compute ⟦sin(0.3)/0.1⟧ in the [Desmos scientific calculator](' + DESMOS + ').'] },
+      { lead: 'Find `h(−0.1)`.', ask: 'h(−0.1) ≈', num: true, ans: '2.9552', tol: 0.00011,
+        wrongs: [['-2.9552', '`sin(−0.3)` is negative, and so is the bottom, `−0.1`. A negative divided by a negative is positive.'],
+          ['-0.2955', 'That is `sin(−0.3)`, the top. Divide it by the bottom, `−0.1`.']],
+        hints: ['Compute ⟦sin(-0.3)/(-0.1)⟧. Watch the two minus signs.'] },
+      { lead: 'Find `h(0.01)`.', ask: 'h(0.01) ≈', num: true, ans: '2.9996', tol: 0.00011,
+        wrongs: [['0.0524', 'Your calculator is in degree mode. Switch it to radians and compute again.'],
+          ['0.03', 'That is `sin(0.03)`, the top. Divide it by the bottom, 0.01.'],
+          ['3', 'Keep four decimal places: `h(0.01)` is close to 3 but not equal to it.']],
+        hints: ['Compute ⟦sin(0.03)/0.01⟧, then round to four decimal places.'] },
+      { show: ['h(−0.01) ≈ 2.9996', 'h(0.001) ≈ 3.0000', 'h(−0.001) ≈ 3.0000'] },
+      { lead: 'The board shows the other three values. Estimate the limit.', ask: 'lim{x→0} h(x) ≈', num: true, ans: '3', tol: 0.0001,
+        wrongs: [[['2.9996', '2.9552'], 'That is one of the values. As `x` closes in on 0, the values close in on a single whole number.'],
+          ['0', 'Plugging in 0 gives `F{sin 0}{0} = F{0}{0}`, which has no value, so it says nothing about the limit. Read the values near 0.'],
+          [DNE.concat(['undefined', 'none', '0/0']), '`h(0)` has no value, but both sides close in on the same number, so the limit exists.'],
+          ['0.0524', 'Those are degree-mode values. In radians the values close in on a whole number.']],
+        hints: ['From both sides: 2.9552, then 2.9996, then 3.0000. Which number are they closing in on?'] }],
+    graph: { x: [-2, 2], y: [-1, 4], ticks: { x: 1, y: 1 }, fns: [{ f: function (x) { return Math.sin(3 * x) / x; }, domain: [-2, 2] }], dots: [{ x: 0, y: 3, open: true, label: '(0, 3)', at: 'ne' }],
+      aria: 'The graph of h, a wave that peaks near height 3 at x = 0 and dies down on both sides, with an open circle, a hole, at (0, 3).' },
+    after: 'The graph of `h` has a hole at `(0, 3)`: the curve heads to height 3 from both sides.' },
+
+  /* 15. (twin 2.6) a table where the value at the point differs from the limit */
+  { id: 'm7', sec: 'sec-more', task: 'The table gives values of a function `f` near `x = 5`. At 5 itself, `f(5) = 8`.', teach: T_LIMIT,
+    tbl: { cols: ['`x`', '`f(x)`', '`x`', '`f(x)`'], rows: [['4.9', '2.98', '5.1', '3.02'], ['4.99', '2.998', '5.01', '3.002'], ['4.999', '2.9998', '5.001', '3.0002']] },
+    steps: [
+      { lead: 'As `x` approaches 5 from the left, what number do the values of `f(x)` approach?', ask: 'lim{x→5^-} f(x) ≈', num: true, ans: '3', tol: 0.0001,
+        wrongs: [['8', '`f(5) = 8` is the value at 5. A one-sided limit uses the values near 5: read the left-hand pair.'],
+          [['2.98', '2.998', '2.9998'], 'That is one of the values in the table. What number are they closing in on?'],
+          ['5', '`x` approaches 5. The question asks what `f(x)` approaches: read the `f(x)` values.']],
+        hints: ['Read the `f(x)` values for 4.9, 4.99 and 4.999.'] },
+      { lead: 'Now read the right-hand pair, where `x > 5`.', ask: 'lim{x→5^+} f(x) ≈', num: true, ans: '3', tol: 0.0001,
+        wrongs: [['8', '`f(5) = 8` is the value at 5. A one-sided limit uses the values near 5: read the right-hand pair.'],
+          [['3.02', '3.002', '3.0002'], 'That is one of the values in the table. What number are they closing in on?']],
+        hints: ['Read the `f(x)` values for 5.1, 5.01 and 5.001.'] },
+      { lead: 'Estimate the limit.', ask: 'lim{x→5} f(x) ≈', num: true, ans: '3', tol: 0.0001,
+        wrongs: [['8', 'The value `f(5) = 8` never decides the limit. Both sides approach 3.', ['#ex-p7', 'See Problem 7: a solid dot apart from the curve']],
+          [DNE.concat(['undefined', 'none']), 'Both sides approach the same number, 3, so the limit exists. It can differ from `f(5)`.']],
+        hints: ['When both one-sided limits are the same number, the limit is that number.'] },
+      { lead: 'What would the graph of `f` look like at `x = 5`?', ok: 0, pick: [
+        ['The curve heads to an open circle at `(5, 3)`, and a solid dot sits apart from it at `(5, 8)`', 'The limit, 3, is the height the curve heads to, and the value, 8, is where the solid dot sits.'],
+        ['The curve passes through `(5, 8)` with no break', 'Then the values near 5 would be near 8. They are near 3.'],
+        ['The table must have a mistake, because a limit equals the value', 'A limit can differ from the value. The limit uses only the values near 5.']] }],
+    graph: { x: [2, 8], y: [0, 9], ticks: { x: 1, y: 1 }, fns: [{ f: function (x) { return 3 + 0.2 * (x - 5); }, domain: [2, 8] }],
+      dots: [{ x: 5, y: 3, open: true, label: '(5, 3)', at: 's' }, { x: 5, y: 8, label: '(5, 8)', at: 'e' }],
+      aria: 'One graph that fits the table: a slowly rising line through an open circle, a hole, at (5, 3), with a separate solid dot above it at (5, 8).' },
+    after: 'One graph that fits the table: the line heads to `(5, 3)` from both sides, and the value `f(5) = 8` sits apart from it.' },
+
+  /* 16. (twin 2.7) one-sided limits from a graph with a jump and a hole */
+  { id: 'm8', sec: 'sec-more', task: 'The graph of `g` is shown. Solid dots are values of `g`; open circles are not.', teach: T_ONE,
+    fig: { x: [-4.5, 6.5], y: [-2, 9], h: 340, ticks: { x: 1, y: 1 }, fns: [{ f: function () { return 2; }, domain: [-4, 0] }, { f: function (x) { return 2 * x - 1; }, domain: [0, 3] }, { f: function (x) { return x + 2; }, domain: [3, 6] }],
+      dots: [{ x: -4, y: 2 }, { x: 0, y: 2 }, { x: 0, y: -1, open: true }, { x: 3, y: 5, open: true }, { x: 3, y: 1 }, { x: 6, y: 8 }],
+      aria: 'The graph of g. A level segment at height 2 runs from a solid dot at (−4, 2) to a solid dot at (0, 2). A line rises from an open circle at (0, −1) to an open circle at (3, 5). A solid dot sits below that at (3, 1). A line rises from the open circle at (3, 5) to a solid dot at (6, 8).' },
+    steps: [
+      { lead: 'At `x = 0`, find the left-hand limit.', ask: 'lim{x→0^-} g(x) =', num: true, ans: '2',
+        wrongs: [['-1', '`−1` is where the graph starts on the right. From the left, `x < 0`, the level piece stays at height 2.']],
+        hints: ['Follow the graph toward `x = 0` from values less than 0.'] },
+      { lead: 'Now the right-hand limit.', ask: 'lim{x→0^+} g(x) =', num: true, ans: '-1',
+        wrongs: [['2', '2 is the height on the left. From the right, `x > 0`, the rising piece heads down to the open circle at height `−1`.']],
+        hints: ['Follow the rising piece back toward `x = 0`, from values greater than 0.'] },
+      { lead: 'Which statement about `lim{x→0} g(x)` is true?', ok: 0, pick: [
+        ['It does not exist, because the one-sided limits, 2 and `−1`, are different', 'A limit exists only when both one-sided limits exist and are equal.'],
+        ['It is 2, because `g(0) = 2`', 'The value at 0 never decides a limit. From the right, the graph heads to `−1`.'],
+        ['It is 0.5, halfway between 2 and `−1`', 'The graph does not head to height 0.5 from either side.']] },
+      { lead: 'Find `g(0)`.', ask: 'g(0) =', num: true, ans: '2',
+        wrongs: [['-1', 'The open circle at height `−1` is not a value of `g`. The solid dot at `(0, 2)` is.']],
+        hints: ['At `x = 0`, look for the solid dot.'] },
+      { again: true, lead: 'At `x = 3`, follow the graph toward 3 from each side. Find the limit.', ask: 'lim{x→3} g(x) =', num: true, ans: '5',
+        wrongs: [['1', 'The solid dot at `(3, 1)` gives the value `g(3)`. A limit uses the values near 3, and from both sides the graph heads to height 5.', ['#ex-p7', 'See Problem 7, the same step']],
+          [DNE, 'Both pieces head to the same open circle, at height 5, so the one-sided limits agree and the limit exists.']],
+        hints: ['From the left the rising piece heads to an open circle. From the right the next piece starts at the same open circle. What height is it?'] },
+      { lead: 'Find `g(3)`.', ask: 'g(3) =', num: true, ans: '1',
+        wrongs: [['5', 'The open circle at height 5 is where the graph heads, not a value of `g`. The solid dot at `x = 3` is.']],
+        hints: ['At `x = 3`, look for the solid dot.'] }] },
+
+  /* 17. (Paul, One-Sided Limits, Problems 3 and 4) from limits and values back to a graph */
+  { id: 'm9', sec: 'sec-more', task: 'A function `f` has `lim{x→−2} f(x) = 1` and `f(−2) = 4`. It also has `lim{x→2^-} f(x) = 3`, `lim{x→2^+} f(x) = −1` and `f(2) = −1`. Decide what a graph of `f` must show.', teach: T_ONET,
+    steps: [
+      { lead: 'At `x = −2`, what must the graph show?', ok: 0, pick: [
+        ['An open circle at `(−2, 1)` and a solid dot at `(−2, 4)`', 'The graph heads to height 1 from both sides, and the value 4 sits apart from it.'],
+        ['A solid dot at `(−2, 1)`', 'The value is `f(−2) = 4`, so the solid dot goes at height 4. Height 1 is where the graph heads; it gets an open circle.'],
+        ['An open circle at `(−2, 4)` and a solid dot at `(−2, 1)`', 'Those are swapped. The limit, 1, is where the graph heads: an open circle. The value, 4, is the solid dot.']] },
+      { lead: 'At `x = 2`, what must the graph show?', ok: 0, pick: [
+        ['From the left, it heads to an open circle at `(2, 3)`; from the right, it starts at a solid dot at `(2, −1)`', 'The left-hand limit is 3 and the right-hand limit is `−1`, and `f(2) = −1` fills in the right-hand piece’s starting point.'],
+        ['From the left, it ends at a solid dot at `(2, 3)`; from the right, it starts at an open circle at `(2, −1)`', 'The value is `f(2) = −1`, so the solid dot goes at height `−1`. Height 3 is only where the left piece heads.'],
+        ['It passes through `(2, 1)` with no break, halfway between 3 and `−1`', 'From the left the graph must head to 3, and from the right to `−1`. It never comes near height 1 at `x = 2`.']] },
+      { lead: 'Which statement about `lim{x→2} f(x)` is true?', ok: 0, pick: [
+        ['It does not exist, because the one-sided limits, 3 and `−1`, are different', 'A limit exists only when both one-sided limits exist and are equal.'],
+        ['It is `−1`, because `f(2) = −1`', 'The value at 2 never decides a limit. From the left, the graph heads to 3.', ['#ex-p7', 'See Problem 7, the same question']],
+        ['It is 3, the left-hand limit', 'A limit needs both sides to agree. From the right, the graph heads to `−1`.']] },
+      { lead: 'Two students draw different graphs, and both meet every condition. Can both be right?', ok: 0, pick: [
+        ['Yes: the conditions fix only what happens at `x = −2` and `x = 2`, so the rest of the graph can be drawn many ways', 'The conditions say nothing about heights away from those two inputs.'],
+        ['No: the conditions pin down exactly one graph', 'They give only limits and values at `x = −2` and `x = 2`. Between and beyond those inputs, any heights fit.'],
+        ['Only if both graphs are made of straight lines', 'Nothing in the conditions asks for straight lines. Any curve with the right holes and dots fits.']] }],
+    graph: { x: [-4.5, 4.5], y: [-3, 5], ticks: { x: 1, y: 1 }, fns: [{ f: function (x) { return 0.5 * x + 2; }, domain: [-4, 2] }, { f: function (x) { return x - 3; }, domain: [2, 4] }],
+      dots: [{ x: -2, y: 1, open: true, label: '(−2, 1)', at: 'nw' }, { x: -2, y: 4, label: '(−2, 4)', at: 'ne' }, { x: 2, y: 3, open: true, label: '(2, 3)', at: 'nw' }, { x: 2, y: -1, label: '(2, −1)', at: 'se' }],
+      aria: 'One graph that fits: a line rising from (−4, 0) through an open circle at (−2, 1), with a solid dot above it at (−2, 4), to an open circle at (2, 3). A second line rises from a solid dot at (2, −1) to (4, 1).' },
+    after: 'One graph that fits. It heads to a hole at `(−2, 1)` with the value 4 above it, then jumps at `x = 2` from height 3 down to the solid dot at `(2, −1)`. Many other graphs fit too.' }
 ];
 /* ================================ builder (keep unchanged when copying) ================================ */
 /* PARENTHESIS SLIPS. Typing x+3/x+4 for (x + 3)/(x + 4) is the commonest typing slip, and the engine's "Reads as" line
@@ -3217,7 +3491,7 @@ function backHTML() {
 function page() {
   return header('Unit 2 Practice', SECTIONS_P.map(function (s) { return ['#' + s.id, s.nav]; }).concat([['#sec-back', 'Next']])) +
     '<main id="top">' + hero({ kicker: 'Calculus I · Unit 2: Change', title: 'Unit 2 Practice',
-      dek: 'Use this page after you read Unit 2: Change and Unit 2 Worked Examples. Each problem goes one step at a time, and each answer is checked before the next step opens. Every answer is a number.' }) +
+      dek: 'Use this page after you read Unit 2: Change and Unit 2 Worked Examples. Each problem goes one step at a time, and each answer is checked before the next step opens. Problems 9 to 17, under More Practice, are optional. Every answer is a number, except the last step of Problem 12, which asks for the equation of a line.' }) +
     SECTIONS_P.map(sectionHTML).join('') + backHTML() + '</main>';
 }
 expose({ PROBLEMS: PROBLEMS, problemHTML: problemHTML, formProblem: formProblem, stepDone: stepDone });
